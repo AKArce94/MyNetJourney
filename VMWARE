@@ -1,0 +1,11 @@
+install a VMware with license rivan
+
+root
+
+C1sc0123
+uname -a
+rm -r /etc/udev/rules.d/70-persistent-net.rules
+y
+reboot
+
+
