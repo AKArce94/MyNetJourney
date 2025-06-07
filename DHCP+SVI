@@ -1,0 +1,51 @@
+**ASSIGNMENT WEEK 2
+@D1 (for server)
+vlan 101
+ name vlan101.com.ph
+ exit
+Int vlan 101
+ no shut
+ ip add 10.0.4.100 255.255.252.0
+ ip ospf 1 area 0
+ip dhcp excluded-add 10.0.4.1 10.0.4.99 
+ip dhcp excluded-add 10.0.4.120 10.0.7.254
+ip dhcp pool vlan101.com.ph
+ network 10.0.4.0 255.255.252.0
+ default-router 10.0.4.1
+ domain-name vlan101.com.ph
+
+
+@port assign to port server1
+
+Int e1/0
+  switchport mode access
+  switchport access vlan 101
+  no shut
+  do sh ip dhcp binding 
+
+
+@D2 (for server)
+
+config t
+vlan 201
+ name vlan201.com.ph
+ exit
+Int vlan 201
+ no shut
+ ip add 10.0.32.149 255.255.224.0
+ ip ospf 1 area 0
+ip dhcp excluded-add 10.0.32.2 10.0.32.148
+ip dhcp excluded-add 10.0.32.180 10.0.63.254
+ip dhcp pool vlan201.com.ph
+ network 10.0.32.1 255.255.224.0
+ default-router 10.0.32.1
+ domain-name vlan201.com.ph
+
+@port assign to port server2
+config t
+Int e1/0
+  switchport mode access
+  switchport access vlan 201
+  no shut
+  do sh ip dhcp binding 
+
