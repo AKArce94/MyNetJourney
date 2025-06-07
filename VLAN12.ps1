@@ -25,3 +25,4 @@ config t
 Int e1/0
 no shut
 ip address dhcp
+do sho ip int br | ex una
