@@ -1,4 +1,4 @@
-﻿!@@@CORE SWITCH SA 
+﻿!@@@CORE SWITCH SA TAAS
 config t
    hostname COREtaas-32
    enable secret pass
