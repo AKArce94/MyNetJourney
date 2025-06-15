@@ -1,0 +1,158 @@
+WEB 310.COM HTTP, DNS
+WEB 311.COM HTTPS,ICMP
+
+
+Config t
+service timestamps log datetime
+service timestamps debug datetime
+logging 10.32.1.10
+logging trap 5
+NO IP access-list Extended FWP2
+IP access-list Extended FWP2
+ Permit tcp Any host www.web310.com eq 80 log
+ Permit tcp Any host www.web310.com eq 443 log
+ Permit icmp Any host www.web311.com log
+ Permit tcp Any host www.web310.com eq 53 log
+ Int Gi 3
+  no ip access-group FWP2 in
+  ####
+MAKE A NEW POLICY  
+
+
+
+
+Enable VOIP ports
+
+conf t
+ voice service voip
+  allow-connections h323 to sip
+  allow-connections sip to h323
+  allow-connections sip to sip
+  supplementary-service h450.12
+ sip
+   bind control source-interface Gi3/0
+   bind media source-interface Gi3/0
+   registrar server expires max 600 min 60
+!
+ voice register global
+  mode cme
+  source-address 192.168.103.1 port 5060
+  max-dn 12
+  max-pool 12
+  authenticate register
+  create profile sync syncinfo.xml
+  
+  
+  Task 3: you are hired as a SOC ENG L4 with 150k/month
+  Creata fwp3 to met this business requirement:
+  
+  www.web310.com will allow http,https, dns, ssh
+  www.web311.com is a voip gateway: h323, sccp, sip, ping 
+
+Step 1: how many lines of code: 8 lines: 2 victimes  x 4 = 8
+Step 2: make a template:   
+
+
+conf t 
+NO IP access-list Extended FWP3
+IP access-list Extended FWP3
+ Permit tcp Any host www.web310.com eq 80 log
+ Permit tcp Any host www.web310.com eq 443 log
+ Permit tcp Any host www.web310.com eq 53 log
+ Permit tcp Any host www.web310.com eq 22 log
+ 
+ !second 
+ 
+ Permit tcp Any host www.web311.com eq 1720 log
+ Permit tcp Any host www.web311.com eq 2000 log
+ Permit icmp Any host www.web311.com log
+ Permit tcp Any host www.web311.com eq 5061 log
+ Int Gi 3
+  ip access-group FWP3 in
+  
+  
+  
+  Task 4: YOU ARE HIRE AS FIREWALL ANALYST WITH 130K/MONTH
+  
+   www.web310.com will allow sip, sccp, https, h323, ping
+  www.web311.com is a voip gateway: ssh, dns, telnet 
+  
+  conf t 
+NO IP access-list Extended FWP4
+IP access-list Extended FWP4
+ Permit tcp Any host www.web310.com eq 5060 log
+ Permit tcp Any host www.web310.com eq 2000 log
+ Permit tcp Any host www.web310.com eq 443 log
+ Permit tcp Any host www.web310.com eq 1720 log
+ Permit icmp Any host www.web310.com log
+ 
+ !second 
+ 
+ Permit tcp Any host www.web311.com eq 22 log
+ Permit tcp Any host www.web311.com eq 53 log
+ Permit tcp Any host www.web311.com eq 23 log
+ Int Gi 3
+  ip access-group FWP4 in
+  
+  
+   Task 5: YOU ARE HIRE AS cyber sec  WITH 175K/MONTH
+  
+   www.web310.com will allow sip-tsl, sccp, ssh
+   www.web311.com will allow voip gateway: block all traffic
+  
+  conf t 
+NO IP access-list Extended FWP5
+IP access-list Extended FWP5
+ Permit tcp Any host www.web310.com eq 5061 log
+ Permit tcp Any host www.web310.com eq 2000 log
+ Permit tcp Any host www.web310.com eq 22 log 
+ Int Gi 3
+  ip access-group FWP5 in
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  config t
+no access-list 8
+access-list 8 permit any
+Int Gi 3
+ ip nat Inside
+Int gi 1
+ ip nat Outside
+IP Nat inside source static tcp 192.168.103.21 80 208.8.8.181 8080
+IP Nat inside source static tcp 192.168.103.21 22 208.8.8.181 8443
+IP Nat inside source static tcp 192.168.103.22 80 208.8.8.182 8080
+IP Nat inside source static tcp 192.168.103.22 22 208.8.8.182 8443
+IP Nat inside source static tcp 192.168.103.23 80 208.8.8.183 8080
+IP Nat inside source static tcp 192.168.103.23 22 208.8.8.183 8443
+IP nat inside source list 8 int gi 1 Overload
+end
+
+
+
+
+
+config t
+no event manager applet makeloop
+event manager applet makeloop
+ event none
+ action 1.0 puts "How many Loopback interfaces do you wish to create?"
+ action 1.1 puts nonewline "> "
+ action 1.2 gets num 
+ action 2.0 cli command "enable"
+ action 2.1 cli command "conf t"
+ action 3.0 set i "1"
+ action 3.1 while $i le $num
+ action 3.2  cli command "interface Loopback $i"
+ action 3.3  cli command "ip address $i.$i.$i.$i 255.255.255.255"
+ action 3.4  increment i 1
+ action 3.5 end
+ action 4.0 cli command "end"
+ end
+
+event manager run makelook
